@@ -1,7 +1,7 @@
 #!/bin/bash
 #--------------------------------------------------------
 # 🚀 Universal OpenWrt Builder - Final Professional Version
-# 👨‍💻 Author: Pakalolo Waraso
+# 👨‍💻 Author: Sopek Semprit
 #--------------------------------------------------------
 
 # === Warna Terminal ===
@@ -16,7 +16,7 @@ trap "echo -e '\n${RED}🚫 Dihentikan oleh pengguna.${NC}'; exit 1" SIGINT
 # === Banner Branding ===
 show_banner() {
     clear
-    message="🚀 Launching Arcadyan Firmware Project by Pakalolo Waraso..."
+    message="🚀 Launching Arcadyan Firmware Project by Sopek Semprit..."
     for ((i=0; i<${#message}; i++)); do
         echo -ne "${YELLOW}${message:$i:1}${NC}"
         sleep 0.01
@@ -40,8 +40,8 @@ EOF
     echo "========================================================="
     echo -e "📦 ${BLUE}Universal OpenWrt/ImmortalWrt/OpenWrt-IPQ/LEDE Builder${NC}"
     echo "========================================================="
-    echo -e "👤 ${BLUE}Author   : Pakalolo Waraso${NC}"
-    echo -e "🌐 ${BLUE}GitHub   : https://github.com/BootLoopLover${NC}"
+    echo -e "👤 ${BLUE}Author   : Sopek Semprit${NC}"
+    echo -e "🌐 ${BLUE}GitHub   : https://github.com/sopektomix${NC}"
     echo -e "💬 ${BLUE}Telegram : t.me/PakaloloWaras0${NC}"
     echo "========================================================="
 }
@@ -118,7 +118,7 @@ add_feeds() {
 
     echo -e "${BLUE}Pilih feed tambahan:${NC}"
     printf "1) ❌  %-25s\n" "Tanpa feed tambahan"
-    printf "2) 🧪  %-25s\n" "Custom Feed (BootLoopLover)"
+    printf "2) 🧪  %-25s\n" "Custom Feed (sopektomix)"
     printf "3) 🐘  %-25s\n" "PHP7 Feed (Legacy)"
     printf "4) 🌐  %-25s\n" "Custom + PHP7"
     echo "========================================================="
@@ -155,7 +155,7 @@ use_preset_menu() {
     if [[ "$preset_answer" == "1" ]]; then
         if [[ ! -d "../preset" ]]; then
             echo -e "${YELLOW}📦 Meng-clone preset config...${NC}"
-            if ! git clone "https://github.com/BootLoopLover/preset.git" "../preset"; then
+            if ! git clone "https://github.com/sopektomix/preset.git" "../preset"; then
                 echo -e "${RED}❌ Gagal clone preset. Lanjutkan manual config.${NC}"
                 make menuconfig
                 return
