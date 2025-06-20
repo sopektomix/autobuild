@@ -131,7 +131,7 @@ use_preset_menu() {
     if [[ "$preset_answer" == "1" ]]; then
         if [[ ! -d "../preset" ]]; then
             echo -e "${YELLOW}📦 Cloning preset config...${NC}"
-            if ! git clone "https://github.com/BootLoopLover/preset.git" "../preset"; then
+            if ! git clone "https://github.com/sopektomix/preset.git" "../preset"; then
                 echo -e "${RED}❌ Failed to clone preset. Proceeding with manual config.${NC}"
                 make menuconfig
                 return
