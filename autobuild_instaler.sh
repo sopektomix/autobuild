@@ -200,32 +200,31 @@ start_build() {
 
 # === Fresh Build ===
 fresh_build() {
-    echo -e "\n📁 Select new build folder:"
-    printf "1) %-20s 3) %s\n" "openwrt"       "openwrt-ipq"
-    printf "2) %-20s 4) %s\n" "immortalwrt"   "Custom (enter manually)"
+    echo -e "\n📁 Pilih folder build baru:"
+    printf "1) %-20s 3) %s\n" "openwrt"       "openwrt-ipq (qosmio)"
+    printf "2) %-20s 4) %s\n" "immortalwrt"   "lede (coolsnowwolf)"
 
     while true; do
-        read -p "🔹 Choice [1-4]: " choice
+        read -p "🔹 Pilihan [1-5]: " choice
         case "$choice" in
             1) folder_name="openwrt";       git_url="https://github.com/openwrt/openwrt";;
             2) folder_name="immortalwrt";   git_url="https://github.com/immortalwrt/immortalwrt";;
             3) folder_name="openwrt-ipq";   git_url="https://github.com/qosmio/openwrt-ipq";;
-            4) 
-                read -p "Custom folder name: " custom_name
-                folder_name="${custom_name:-custom_build}"
-                select_distro;;
-            *) echo -e "${RED}❌ Invalid choice.${NC}"; continue;;
+            4) folder_name="lede";   git_url="https://github.com/coolsnowwolf/lede.git";;
+            *) echo -e "${RED}❌ Pilihan tidak valid.${NC}"; continue;;
         esac
         break
     done
 
-    echo -e "\n📂 Selected folder : ${YELLOW}$folder_name${NC}"
-    mkdir -p "$folder_name" && cd "$folder_name" || { echo -e "${RED}❌ Failed to enter folder.${NC}"; exit 1; }
+    echo -e "\n📂 Folder dipilih : ${YELLOW}$folder_name${NC}"
+    mkdir -p "$folder_name" && cd "$folder_name" || { echo -e "${RED}❌ Gagal masuk folder.${NC}"; exit 1; }
 
-    echo -e "🔗 Cloning from: ${GREEN}$git_url${NC}"
-    git clone "$git_url" . || { echo -e "${RED}❌ Failed to clone repo.${NC}"; exit 1; }
+    echo -e "🔗 Clone dari: ${GREEN}$git_url${NC}"
+    git clone "$git_url" . || { echo -e "${RED}❌ Gagal clone repo.${NC}"; exit 1; }
 
-    echo -e "${GREEN}🔄 Running initial feed update & install...${NC}"
+    [[ "$git_url" == *"coolsnowwolf/lede"* ]] && apply_lede_patch
+
+    echo -e "${GREEN}🔄 Menjalankan update & install feeds awal...${NC}"
     ./scripts/feeds update -a && ./scripts/feeds install -a
 
     checkout_tag
@@ -233,11 +232,13 @@ fresh_build() {
     use_preset_menu
 
     if ! grep -q "^CONFIG_TARGET" .config 2>/dev/null; then
-        echo -e "${RED}❌ Target board not configured. Run menuconfig first.${NC}"
+        echo -e "${RED}❌ Target board belum diatur. Jalankan menuconfig dulu.${NC}"
         make menuconfig
     fi
 
     start_build
+}
+
 }
 
 rebuild_mode() {
