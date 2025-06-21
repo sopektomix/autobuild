@@ -222,15 +222,39 @@ build_action_menu() {
 
 start_build() {
     echo -e "${GREEN}🚀 Starting build with 20 threads...${NC}"
+    echo -e "${YELLOW}📝 Compile logs will be saved to:${NC}"
+    echo -e "  - ${BLUE}build.log${NC} (standard output)"
+    echo -e "  - ${BLUE}build-error.log${NC} (errors only)"
+    echo -e "  - ${BLUE}build-full.log${NC} (verbose output)"
+    
     start_time=$(date +%s)
-    if make -j20 > build.log 2>&1; then
-        echo -e "${GREEN}✅ Build successful!${NC}"
-    else
+    
+    # First attempt with standard logging
+    echo -e "\n${BLUE}=== Initial Build Attempt (standard logging) ===${NC}"
+    make -j20 2>&1 | tee build.log
+    
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
         echo -e "${RED}⚠️ Build failed, attempting auto-fix...${NC}"
         auto_fix_errors
-        echo -e "${YELLOW}🔄 Retrying build with verbose output...${NC}"
-        make -j20 V=s | tee build-error.log
+        
+        # Second attempt with verbose logging
+        echo -e "\n${BLUE}=== Retry Build Attempt (verbose logging) ===${NC}"
+        make -j20 V=s 2>&1 | tee build-full.log
+        
+        # Extract errors to separate file
+        grep -iE 'error:|fail|warning:' build-full.log > build-error.log
+        
+        if [ ${PIPESTATUS[0]} -ne 0 ]; then
+            echo -e "${RED}❌ Build failed after retry. Check logs:${NC}"
+            echo -e "  - ${RED}build-error.log${NC} (errors extracted)"
+            echo -e "  - ${RED}build-full.log${NC} (full verbose output)"
+        else
+            echo -e "${GREEN}✅ Build successful after retry!${NC}"
+        fi
+    else
+        echo -e "${GREEN}✅ Build successful on first attempt!${NC}"
     fi
+    
     end_time=$(date +%s)
     elapsed=$((end_time - start_time))
     echo -e "${BLUE}⏱️ Build completed in $((elapsed / 60)) minutes $((elapsed % 60)) seconds.${NC}"
