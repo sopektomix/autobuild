@@ -42,7 +42,7 @@ EOF
     echo "========================================================="
     echo -e "👤 ${BLUE}Author   : Sopek Semprit${NC}"
     echo -e "🌐 ${BLUE}GitHub   : https://github.com/sopektomix${NC}"
-    echo -e "💬 ${BLUE}Telegram : t.me/sopek21${NC}"
+    echo -e "💬 ${BLUE}Telegram : t.me/PakaloloWaras0${NC}"
     echo "========================================================="
 }
 
