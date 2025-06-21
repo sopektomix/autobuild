@@ -66,6 +66,42 @@ apply_lede_patch() {
     fi
 }
 
+# === Auto Fix Errors Function ===
+auto_fix_errors() {
+    echo -e "\n${YELLOW}🛠️  Attempting to auto-fix common build errors...${NC}"
+    
+    # Fix for common missing dependencies
+    echo -e "${BLUE}🔍 Checking and installing build dependencies...${NC}"
+    sudo apt-get update
+    sudo apt-get install -y build-essential libncurses5-dev gawk git libssl-dev gettext zlib1g-dev swig unzip time rsync python3 python3-setuptools
+    
+    # Fix for failed downloads
+    echo -e "${BLUE}🔄 Cleaning and redownloading failed packages...${NC}"
+    make -j1 download
+    make -j1 download
+    
+    # Fix for permission issues
+    echo -e "${BLUE}🔒 Fixing permission issues...${NC}"
+    sudo chown -R $(whoami) .
+    sudo chmod -R u+rw .
+    
+    # Fix for conflicting object files
+    echo -e "${BLUE}🧹 Cleaning conflicting object files...${NC}"
+    make clean
+    rm -rf tmp
+    
+    # Fix for outdated feeds
+    echo -e "${BLUE}🔄 Updating feeds again...${NC}"
+    ./scripts/feeds update -a -f
+    ./scripts/feeds install -a -f
+    
+    # Fix for missing config symbols
+    echo -e "${BLUE}⚙️  Regenerating config...${NC}"
+    make defconfig
+    
+    echo -e "${GREEN}✅ Auto-fix attempts completed. Retrying build...${NC}"
+}
+
 select_distro() {
     echo -e "${BLUE}Select OpenWrt source:${NC}"
     printf "1) 🏳️  %-15s\n" "openwrt"
@@ -144,7 +180,6 @@ add_feeds() {
     ./scripts/feeds update -a && ./scripts/feeds install -a
 }
 
-# === Preset Config Menu ===
 use_preset_menu() {
     echo -e "${BLUE}Use preset config?${NC}"
     echo "1) ✅ Yes (recommended)"
@@ -183,7 +218,6 @@ use_preset_menu() {
     fi
 }
 
-# === Build Menu & Execution ===
 build_action_menu() {
     echo -e "\n📋 ${BLUE}Build Menu:${NC}"
     printf "1) 🔄  %-30s\n" "Update feeds only"
@@ -212,7 +246,9 @@ start_build() {
     if make -j20 > build.log 2>&1; then
         echo -e "${GREEN}✅ Build successful!${NC}"
     else
-        echo -e "${RED}⚠️ Build failed, retrying with verbose output...${NC}"
+        echo -e "${RED}⚠️ Build failed, attempting auto-fix...${NC}"
+        auto_fix_errors
+        echo -e "${YELLOW}🔄 Retrying build with verbose output...${NC}"
         make -j20 V=s | tee build-error.log
     fi
     end_time=$(date +%s)
@@ -221,7 +257,6 @@ start_build() {
     command -v notify-send &>/dev/null && notify-send "OpenWrt Build" "✅ Build completed in folder: $(pwd)"
 }
 
-# === Fresh Build ===
 fresh_build() {
     echo -e "\n📁 Select new build folder:"
     printf "1) %-20s 4) %s\n" "openwrt"       "lede (coolsnowwolf)"
