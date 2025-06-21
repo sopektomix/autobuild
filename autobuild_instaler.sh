@@ -42,28 +42,8 @@ EOF
     echo "========================================================="
     echo -e "👤 ${BLUE}Author   : Sopek Semprit${NC}"
     echo -e "🌐 ${BLUE}GitHub   : https://github.com/sopektomix${NC}"
-    echo -e "💬 ${BLUE}Telegram : t.me/sopek21${NC}"
+    echo -e "💬 ${BLUE}Telegram : t.me/PakaloloWaras0${NC}"
     echo "========================================================="
-}
-
-# === LEDE Patch Function ===
-apply_lede_patch() {
-    echo -e "${YELLOW}🔧 Applying LEDE-specific patch...${NC}"
-    if [ -d "target/linux/qualcommax" ]; then
-        if [ -f "target/linux/qualcommax/patches-6.6/0400-mtd-rawnand-add-support-for-TH58NYG3S0HBAI4.patch" ]; then
-            mkdir -p target/linux/qualcommax/patches-6.1/
-            if cp -v target/linux/qualcommax/patches-6.6/0400-mtd-rawnand-add-support-for-TH58NYG3S0HBAI4.patch \
-                   target/linux/qualcommax/patches-6.1/0400-mtd-rawnand-add-support-for-TH58NYG3S0HBAI4.patch; then
-                echo -e "${GREEN}✅ Patch copied successfully${NC}"
-            else
-                echo -e "${RED}❌ Failed to copy patch${NC}"
-            fi
-        else
-            echo -e "${YELLOW}⚠️ Patch file not found, skipping${NC}"
-        fi
-    else
-        echo -e "${YELLOW}⚠️ Folder target/linux/qualcommax not found, skipping patch${NC}"
-    fi
 }
 
 # === Auto Fix Errors Function ===
@@ -281,8 +261,6 @@ fresh_build() {
 
     echo -e "🔗 Cloning from: ${GREEN}$git_url${NC}"
     git clone "$git_url" . || { echo -e "${RED}❌ Failed to clone repo.${NC}"; exit 1; }
-
-    [[ "$git_url" == *"coolsnowwolf/lede"* ]] && apply_lede_patch
 
     echo -e "${GREEN}🔄 Running initial feed update & install...${NC}"
     ./scripts/feeds update -a && ./scripts/feeds install -a
