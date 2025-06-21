@@ -42,7 +42,7 @@ EOF
     echo "========================================================="
     echo -e "👤 ${BLUE}Author   : Sopek Semprit${NC}"
     echo -e "🌐 ${BLUE}GitHub   : https://github.com/sopektomix${NC}"
-    echo -e "💬 ${BLUE}Telegram : t.me/sopek21${NC}"
+    echo -e "💬 ${BLUE}Telegram : t.me/PakaloloWaras0${NC}"
     echo "========================================================="
 }
 
@@ -72,13 +72,15 @@ select_distro() {
     printf "2) 🔧  %-15s\n" "openwrt-ipq"
     printf "3) 💀  %-15s\n" "immortalwrt"
     printf "4) 🔥  %-15s\n" "lede"
+    printf "5) 🌟  %-15s\n" "immortalwrt-ipq"
     echo "========================================================="
-    read -p "🔹 Choice [1-4]: " distro
+    read -p "🔹 Choice [1-5]: " distro
     case "$distro" in
         1) git_url="https://github.com/openwrt/openwrt";;
         2) git_url="https://github.com/qosmio/openwrt-ipq";;
         3) git_url="https://github.com/immortalwrt/immortalwrt";;
         4) git_url="https://github.com/coolsnowwolf/lede";;
+        5) git_url="https://github.com/Gaojianli/immortalwrt-ipq.git";;
         *) echo -e "${RED}❌ Invalid choice.${NC}"; exit 1;;
     esac
 }
@@ -222,16 +224,18 @@ start_build() {
 # === Fresh Build ===
 fresh_build() {
     echo -e "\n📁 Select new build folder:"
-    printf "1) %-20s 3) %s\n" "openwrt"       "openwrt-ipq (qosmio)"
-    printf "2) %-20s 4) %s\n" "immortalwrt"   "lede (coolsnowwolf)"
+    printf "1) %-20s 4) %s\n" "openwrt"       "lede (coolsnowwolf)"
+    printf "2) %-20s 5) %s\n" "immortalwrt"   "immortalwrt-ipq (Gaojianli)"
+    printf "3) %-20s\n" "openwrt-ipq (qosmio)"
 
     while true; do
-        read -p "🔹 Choice [1-4]: " choice
+        read -p "🔹 Choice [1-5]: " choice
         case "$choice" in
             1) folder_name="openwrt";       git_url="https://github.com/openwrt/openwrt";;
             2) folder_name="immortalwrt";   git_url="https://github.com/immortalwrt/immortalwrt";;
             3) folder_name="openwrt-ipq";   git_url="https://github.com/qosmio/openwrt-ipq";;
-            4) folder_name="lede";   git_url="https://github.com/coolsnowwolf/lede.git";;
+            4) folder_name="lede";          git_url="https://github.com/coolsnowwolf/lede.git";;
+            5) folder_name="immortalwrt-ipq"; git_url="https://github.com/Gaojianli/immortalwrt-ipq.git";;
             *) echo -e "${RED}❌ Invalid choice.${NC}"; continue;;
         esac
         break
